@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Marketing Digital - MetricsPro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #3a0011;
+            --primary-color: #6b001a; 
+            --accent-pink: #d94b68;
+            --bg-body: #fbf9fa;
+            --card-bg: #ffffff;
+            --text-main: #2d2d2d;
+            --text-muted: #8e8e8e;
+            --green-trend: #28a745;
+            --border-soft: #f0e6e8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL (ESTILO PREMIUM IMAGE_E3C5A5) */
+        .sidebar {
+            width: 280px;
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand i {
+            font-size: 24px;
+            color: var(--accent-pink);
+        }
+
+        .brand h2 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-pink);
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-group select option {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        /* MENÚ DE NAVEGACIÓN ACTUALIZADO */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* CONTENIDO PRINCIPAL SCROLLABLE */
+        .main-content {
+            flex: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            overflow-y: auto;
+        }
+
+        /* ENCABEZADO SUPERIOR */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-soft);
+            padding-bottom: 15px;
+        }
+
+        .top-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .top-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .date-badge {
+            background-color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border-soft);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CONTENEDOR DE CONTADORES (KPI CARDS) - ID CAMBIADO */
+        .kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .kpi-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(107, 0, 26, 0.03);
+            border: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .kpi-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .kpi-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-icon-wrapper {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background-color: rgba(107, 0, 26, 0.08);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+
+        .kpi-trend {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green-trend);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* DISTRIBUCIÓN DE FILAS DE GRÁFICOS */
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: 63% 37%;
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(107, 0, 26, 0.03);
+            border: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #fcf2f4;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+        }
+
+        /* TABLA DE CONTENIDO CORPORATIVA */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #faf4f5;
+            color: var(--primary-color);
+            font-weight: 700;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-soft);
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        td {
+            padding: 11px 12px;
+            border-bottom: 1px solid var(--border-soft);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fdfafb;
+        }
+
+        .footer-notice {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-chart-pie"></i>
+            <h2>MetricsPro</h2>
+        </div>
+
+        <div class="sidebar-section-title">Filtros Avanzados</div>
+        
+        <div class="filter-group">
+            <label for="filtro-plataforma"><i class="fa-solid fa-share-nodes"></i> Plataforma</label>
+            <select id="filtro-plataforma">
+                <option value="all">Todas</option>
+                <option value="TikTok">TikTok</option>
+                <option value="Instagram">Instagram</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Twitter">Twitter (X)</option>
+                <option value="LinkedIn">LinkedIn</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="filtro-contenido"><i class="fa-solid fa-photo-film"></i> Tipo de Contenido</label>
+            <select id="filtro-contenido">
+                <option value="all">Todos</option>
+                <option value="Video">Video</option>
+                <option value="Image">Imagen</option>
+                <option value="Story">Historia</option>
+                <option value="Carousel">Carrusel</option>
+                <option value="Link">Enlace</option>
+                <option value="Article">Artículo</option>
+            </select>
+        </div>
+
+        <div class="sidebar-section-title">Navegación</div>
+        <div class="nav-menu">
+            <a href="#" class="nav-item active" data-section="resumen">
+                <i class="fa-solid fa-grip"></i> Resumen
+            </a>
+            <a href="#" class="nav-item" data-section="contenido">
+                <i class="fa-solid fa-photo-film"></i> Contenido
+            </a>
+            <a href="#" class="nav-item" data-section="campanas">
+                <i class="fa-solid fa-bullhorn"></i> Campañas
+            </a>
+            <a href="#" class="nav-item" data-section="audiencia">
+                <i class="fa-solid fa-users"></i> Audiencia
+            </a>
+            <a href="#" class="nav-item" data-section="tendencias">
+                <i class="fa-solid fa-arrow-trend-up"></i> Tendencias
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="top-header">
+            <div>
+                <h1>DASHBOARD DE MARKETING DIGITAL</h1>
+                <p>Análisis de Engagement en Redes Sociales</p>
+            </div>
+            <div class="date-badge">
+                <i class="fa-regular fa-calendar-days"></i> 01/01/2024 - 31/12/2024
+            </div>
+        </div>
+
+        <div class="kpis-grid" id="seccion-kpis">
+            <div class="kpi-card">
+                <div class="kpi-header-row">
+                    <span class="kpi-title">Tasa de Engagement</span>
+                    <div class="kpi-icon-wrapper"><i class="fa-solid fa-users-viewfinder"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-tasa">0,00 %</div>
+                <div class="kpi-trend"><i class="fa-solid fa-arrow-up"></i> 12,6% <span style="color:var(--text-muted); font-weight:normal;">vs año ant.</span></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header-row">
+                    <span class="kpi-title">Interacciones Totales</span>
+                    <div class="kpi-icon-wrapper"><i class="fa-solid fa-heart"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-interacciones">0</div>
+                <div class="kpi-trend"><i class="fa-solid fa-arrow-up"></i> 18,3% <span style="color:var(--text-muted); font-weight:normal;">vs año ant.</span></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header-row">
+                    <span class="kpi-title">Alcance Total</span>
+                    <div class="kpi-icon-wrapper"><i class="fa-solid fa-eye"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-alcance">0</div>
+                <div class="kpi-trend"><i class="fa-solid fa-arrow-up"></i> 15,7% <span style="color:var(--text-muted); font-weight:normal;">vs año ant.</span></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header-row">
+                    <span class="kpi-title">Conversiones</span>
+                    <div class="kpi-icon-wrapper"><i class="fa-solid fa-arrow-pointer"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-conversiones">0</div>
+                <div class="kpi-trend"><i class="fa-solid fa-arrow-up"></i> 21,9% <span style="color:var(--text-muted); font-weight:normal;">vs año ant.</span></div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header-row">
+                    <span class="kpi-title">Impresiones</span>
+                    <div class="kpi-icon-wrapper"><i class="fa-solid fa-chart-column"></i></div>
+                </div>
+                <div class="kpi-value" id="kpi-impresiones">0</div>
+                <div class="kpi-trend"><i class="fa-solid fa-arrow-up"></i> 17,1% <span style="color:var(--text-muted); font-weight:normal;">vs año ant.</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-row" id="seccion-evolucion">
+            <div class="dashboard-card">
+                <h3>Evolución del Engagement en el Tiempo</h3>
+                <div class="chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Distribución de Interacciones por Plataforma</h3>
+                <div class="chart-container">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-row" id="seccion-contenido">
+            <div class="dashboard-card">
+                <h3>Interacciones por Tipo de Contenido</h3>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Rendimiento por Campaña</h3>
+                <div class="table-wrapper">
+                    <table id="campaignTable">
+                        <thead>
+                            <tr>
+                                <th>Campaña</th>
+                                <th>Interacciones</th>
+                                <th>Alcance Total</th>
+                                <th>Eng. Rate (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-notice">
+            <i class="fa-solid fa-circle-info" style="color: var(--primary-color);"></i> Los valores pueden variar según los filtros aplicados en el panel izquierdo de MetricsPro.
+        </div>
+    </div>
+
+    <script src="/static/dashboard.js"></script>
+</body>
+</html>
