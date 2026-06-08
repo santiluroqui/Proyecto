@@ -11,11 +11,11 @@ CORS(app)
 import os
 
 DB_CONFIG = {
-    'host': os.environ.get('dpg-d8j0hgj7uimc73b7snqg-a'),
-    'database': os.environ.get('marketing_bi'),
-    'user': os.environ.get('marketing_user'),
-    'password': os.environ.get('pP4Hs5sLcHKicPbjteySVqK5W4b687kN'),
-    'port': os.environ.get('5432'),
+    'host': os.environ.get('DB_HOST'),
+    'database': os.environ.get('DB_NAME'),
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD'),
+    'port': os.environ.get('DB_PORT'),
     'client_encoding': 'utf8'
 }
 
