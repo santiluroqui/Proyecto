@@ -8,12 +8,14 @@ import traceback
 app = Flask(__name__)
 CORS(app)
 
+import os
+
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'marketing_bi',
-    'user': 'postgres',
-    'password': 'renata',
-    'port': '5432',
+    'host': os.environ.get('dpg-d8j0hgj7uimc73b7snqg-a'),
+    'database': os.environ.get('marketing_bi'),
+    'user': os.environ.get('marketing_user'),
+    'password': os.environ.get('pP4Hs5sLcHKicPbjteySVqK5W4b687kN'),
+    'port': os.environ.get('5432'),
     'client_encoding': 'utf8'
 }
 
